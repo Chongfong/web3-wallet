@@ -1,8 +1,6 @@
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains';
 import { Select, MenuItem } from '@mui/material';
-
-
 
 function App() {
   const account = useAccount()
@@ -40,6 +38,10 @@ function App() {
     }
   };
 
+  const balance = useBalance({
+    address: account.address,
+  })
+
   return (
     <>
       <div>
@@ -59,6 +61,12 @@ function App() {
           </button>
         )}
       </div>
+
+      {balance.data && (
+        <div>
+          {balance.data.formatted} {balance.data.symbol}
+        </div>
+      )}
 
       <div>
         <h2>Connect</h2>
