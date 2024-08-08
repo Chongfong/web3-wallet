@@ -1,6 +1,8 @@
 import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains';
 import { Select, MenuItem } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { ERC20_TOKENS } from './constants';
 
 function App() {
   const account = useAccount()
@@ -38,9 +40,21 @@ function App() {
     }
   };
 
+  const [usdPrices, setUsdPrices] = useState<{ [key: string]: { usd: number } }>({});
+  const fetchUsdPrices = () => {
+    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd')
+    .then((data) => data.json())
+    .then((price) => setUsdPrices(price))
+  }
+
+  useEffect(() => {
+    fetchUsdPrices();
+  }, []);
+
   const balance = useBalance({
-    address: account.address,
+    address: '0x6b175474e89094c44da98b954eedeac495271d0f',// account.address,
   })
+
 
   return (
     <>
@@ -59,15 +73,23 @@ function App() {
           <button type="button" onClick={() => disconnect()}>
             Disconnect
           </button>
+
+
         )}
       </div>
 
-      {balance.data && (
+      {balance.data &&  Object.keys(usdPrices).length &&(
         <div>
-          {balance.data.formatted} {balance.data.symbol}
+          {balance.data.formatted} {parseFloat(`${balance.data.value}`) / 10 ** 18 * usdPrices.ethereum.usd} {balance.data.symbol}
         </div>
       )}
-
+{Object.keys(usdPrices).length&& (
+<div>
+  <img src={ERC20_TOKENS[0].icon}/> BITCOIN <p>bitcoin: {usdPrices?.bitcoin.usd}</p>
+  <img src={ERC20_TOKENS[1].icon}/> Ethereum <p>ethereum: {usdPrices?.ethereum.usd}</p>
+  <img src={ERC20_TOKENS[2].icon}/> USD <p>USD: {usdPrices?.['usd-coin'].usd}</p>
+</div>
+)}
       <div>
         <h2>Connect</h2>
         {connectors.map((connector) => (
