@@ -3,6 +3,7 @@ import { mainnet, sepolia } from 'wagmi/chains';
 import { Select, MenuItem } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ERC20_TOKENS } from './constants';
+import PieChartComponent from './PieChart';
 
 function App() {
   const account = useAccount()
@@ -55,6 +56,16 @@ function App() {
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',// account.address,
   })
 
+  const [assets, setAssets] = useState<{id: number, value: number, label: string}[]>([]);
+
+  useEffect(() => {
+    const usdPricesValue = usdPrices || {};
+    setAssets([
+      { id: 1, value: 10 * usdPricesValue.bitcoin?.usd || 0, label: 'BITCOIN' },
+      { id: 2, value: (parseFloat(`${balance?.data?.value}`) / 10 ** 18 * usdPricesValue.ethereum?.usd) || 0, label: 'Ethereum' },
+      { id: 3, value: 20 * usdPricesValue['usd-coin']?.usd || 0, label: 'USD' },
+    ]);
+  }, [balance?.data?.value, usdPrices]);
 
   return (
     <>
@@ -81,6 +92,7 @@ function App() {
       {balance.data &&  Object.keys(usdPrices).length &&(
         <div>
           {balance.data.formatted} {parseFloat(`${balance.data.value}`) / 10 ** 18 * usdPrices.ethereum.usd} {balance.data.symbol}
+          <PieChartComponent data={assets} />
         </div>
       )}
 {Object.keys(usdPrices).length&& (
@@ -90,6 +102,9 @@ function App() {
   <img src={ERC20_TOKENS[2].icon}/> USD <p>USD: {usdPrices?.['usd-coin'].usd}</p>
 </div>
 )}
+
+
+  
       <div>
         <h2>Connect</h2>
         {connectors.map((connector) => (
