@@ -1,14 +1,30 @@
 import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains';
-import { Select, MenuItem } from '@mui/material';
+import { Select, MenuItem, Button, Box, Modal } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ERC20_TOKENS } from './constants';
 import PieChartComponent from './PieChart';
+import TransferAssets from './TransferAssets';
 
 function App() {
   const account = useAccount()
   const { connectors, connect, status, error } = useConnect()
   const { disconnect } = useDisconnect()
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
   const handleSwitchNetwork = async (chainId: number) => {
     if (window.ethereum) {
@@ -97,7 +113,7 @@ function App() {
       )}
 {Object.keys(usdPrices).length&& (
 <div>
-  <img src={ERC20_TOKENS[0].icon}/> BITCOIN <p>bitcoin: {usdPrices?.bitcoin.usd}</p>
+  <img src={ERC20_TOKENS[0].icon}/> BITCOIN <p>bitcoin: {usdPrices?.bitcoin.usd}</p> <Button onClick={handleOpen}>Open modal</Button>
   <img src={ERC20_TOKENS[1].icon}/> Ethereum <p>ethereum: {usdPrices?.ethereum.usd}</p>
   <img src={ERC20_TOKENS[2].icon}/> USD <p>USD: {usdPrices?.['usd-coin'].usd}</p>
 </div>
@@ -120,6 +136,17 @@ function App() {
         <div>{error?.message}</div>
       </div>
 
+      <Modal
+  open={open}
+  onClose={handleClose}
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+>
+  <Box sx={style}>
+  <TransferAssets/>
+  </Box>
+</Modal>
+
       {account.status === 'connected' && (
         <div>
           <h2>Switch Network</h2>
@@ -130,6 +157,7 @@ function App() {
             <MenuItem value={mainnet.id}>Ethereum Mainnet</MenuItem>
             <MenuItem value={sepolia.id}>Sepolia Testnet</MenuItem>
           </Select>
+          
         </div>
       )}
     </>
