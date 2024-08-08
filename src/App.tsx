@@ -1,15 +1,21 @@
-import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
-import { Select, MenuItem, Button, Box, Modal } from '@mui/material';
+import {
+  Select,
+  MenuItem,
+  Button,
+  Box,
+  Modal,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ERC20_TOKENS } from './constants';
 import PieChartComponent from './PieChart';
 import TransferAssets from './TransferAssets';
 
 function App() {
-  const account = useAccount()
-  const { connectors, connect, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
+  const account = useAccount();
+  const { connectors, connect, status, error } = useConnect();
+  const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -41,7 +47,10 @@ function App() {
               params: [
                 {
                   chainId: `0x${chainId.toString(16)}`,
-                  rpcUrl: chainId === mainnet.id ? mainnet.rpcUrls.default : sepolia.rpcUrls.default,
+                  rpcUrl:
+                    chainId === mainnet.id
+                      ? mainnet.rpcUrls.default
+                      : sepolia.rpcUrls.default,
                 },
               ],
             });
@@ -57,29 +66,50 @@ function App() {
     }
   };
 
-  const [usdPrices, setUsdPrices] = useState<{ [key: string]: { usd: number } }>({});
+  const [usdPrices, setUsdPrices] = useState<{
+    [key: string]: { usd: number };
+  }>({});
   const fetchUsdPrices = () => {
     fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd')
-    .then((data) => data.json())
-    .then((price) => setUsdPrices(price))
-  }
+      .then((data) => data.json())
+      .then((price) => setUsdPrices(price));
+  };
 
   useEffect(() => {
     fetchUsdPrices();
   }, []);
 
   const balance = useBalance({
-    address: '0x6b175474e89094c44da98b954eedeac495271d0f',// account.address,
-  })
+    address: '0x6b175474e89094c44da98b954eedeac495271d0f', // account.address,
+  });
 
-  const [assets, setAssets] = useState<{id: number, value: number, label: string}[]>([]);
+  const [assets, setAssets] = useState<{
+    id: number;
+    value: number;
+    label: string;
+  }[]>([]);
 
   useEffect(() => {
     const usdPricesValue = usdPrices || {};
     setAssets([
-      { id: 1, value: 10 * usdPricesValue.bitcoin?.usd || 0, label: 'BITCOIN' },
-      { id: 2, value: (parseFloat(`${balance?.data?.value}`) / 10 ** 18 * usdPricesValue.ethereum?.usd) || 0, label: 'Ethereum' },
-      { id: 3, value: 20 * usdPricesValue['usd-coin']?.usd || 0, label: 'USD' },
+      {
+        id: 1,
+        value: 10 * usdPricesValue.bitcoin?.usd || 0,
+        label: 'BITCOIN',
+      },
+      {
+        id: 2,
+        value:
+          (parseFloat(`${balance?.data?.value}`) / 10 ** 18) *
+            usdPricesValue.ethereum?.usd ||
+          0,
+        label: 'Ethereum',
+      },
+      {
+        id: 3,
+        value: 20 * usdPricesValue['usd-coin']?.usd || 0,
+        label: 'USD',
+      },
     ]);
   }, [balance?.data?.value, usdPrices]);
 
@@ -100,27 +130,29 @@ function App() {
           <button type="button" onClick={() => disconnect()}>
             Disconnect
           </button>
-
-
         )}
       </div>
 
-      {balance.data &&  Object.keys(usdPrices).length &&(
+      {balance.data && Object.keys(usdPrices).length > 0 && (
         <div>
-          {balance.data.formatted} {parseFloat(`${balance.data.value}`) / 10 ** 18 * usdPrices.ethereum.usd} {balance.data.symbol}
+          {balance.data.formatted}
+          {parseFloat(`${balance.data.value}`) / 10 ** 18 * usdPrices.ethereum.usd}
+          {balance.data.symbol}
           <PieChartComponent data={assets} />
         </div>
       )}
-{Object.keys(usdPrices).length&& (
-<div>
-  <img src={ERC20_TOKENS[0].icon}/> BITCOIN <p>bitcoin: {usdPrices?.bitcoin.usd}</p> <Button onClick={handleOpen}>Open modal</Button>
-  <img src={ERC20_TOKENS[1].icon}/> Ethereum <p>ethereum: {usdPrices?.ethereum.usd}</p>
-  <img src={ERC20_TOKENS[2].icon}/> USD <p>USD: {usdPrices?.['usd-coin'].usd}</p>
-</div>
-)}
+      {Object.keys(usdPrices).length > 0 && (
+        <div>
+          <img src={ERC20_TOKENS[0].icon} />
+          BITCOIN <p>bitcoin: {usdPrices?.bitcoin.usd}</p>
+          <Button onClick={handleOpen}>Open modal</Button>
+          <img src={ERC20_TOKENS[1].icon} />
+          Ethereum <p>ethereum: {usdPrices?.ethereum.usd}</p>
+          <img src={ERC20_TOKENS[2].icon} />
+          USD <p>USD: {usdPrices?.['usd-coin'].usd}</p>
+        </div>
+      )}
 
-
-  
       <div>
         <h2>Connect</h2>
         {connectors.map((connector) => (
@@ -137,31 +169,28 @@ function App() {
       </div>
 
       <Modal
-  open={open}
-  onClose={handleClose}
-  aria-labelledby="modal-modal-title"
-  aria-describedby="modal-modal-description"
->
-  <Box sx={style}>
-  <TransferAssets/>
-  </Box>
-</Modal>
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <TransferAssets />
+        </Box>
+      </Modal>
 
       {account.status === 'connected' && (
         <div>
           <h2>Switch Network</h2>
-          <Select
-            defaultValue=""
-            onChange={(e) => handleSwitchNetwork(Number(e.target.value))}
-          >
+          <Select defaultValue="" onChange={(e) => handleSwitchNetwork(Number(e.target.value))}>
             <MenuItem value={mainnet.id}>Ethereum Mainnet</MenuItem>
             <MenuItem value={sepolia.id}>Sepolia Testnet</MenuItem>
           </Select>
-          
         </div>
       )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
+
