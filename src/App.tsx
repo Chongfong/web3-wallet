@@ -1,20 +1,19 @@
-import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
+import { useAccount, useConnect, useBalance } from 'wagmi';
 import {
   Button,
   Box,
   Modal,
-  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ERC20_TOKENS } from './constants';
 import PieChartComponent from './PieChart';
 import TransferAssets from './TransferAssets';
 import { SwitchNetWork } from './SwitchNetwork';
+import { WalletInfo } from './WalletInfo';
 
 function App() {
   const account = useAccount();
   const { connectors, connect, status, error } = useConnect();
-  const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -81,52 +80,7 @@ function App() {
 
   return (
     <>
-      <Box
-        sx={{
-          display: 'flex',
-          borderRadius: '8px',
-          border: '1px solid rgba(0,0,0,0.26)',
-          padding: '24px',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        <Typography variant='h5'>Connect Wallet</Typography>
-        <Typography variant='body2' color="gray">
-          Connect your cryptocurrency wallet to view your asset portfolio.
-        </Typography>
-
-        {account.status === "connected" && (
-          <Typography variant='body2'>Address: {JSON.stringify(account.addresses).slice(2, -2)}</Typography>
-        )}
-
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          padding={2}
-        >
-          {account.status !== "connected" ? (
-            <Button
-              variant="contained"
-              sx={{ width: "200px" }}
-              onClick={() => connect({ connector: connectors[3] })}
-              type="button"
-            >
-              Connect Wallet
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              sx={{ width: "200px" }}
-              type="button"
-              onClick={() => disconnect()}
-            >
-              Disconnect
-            </Button>
-          )}
-        </Box>
-      </Box>
+      <WalletInfo/>
 
       {balance.data && Object.keys(usdPrices).length > 0 && (
         <div>
