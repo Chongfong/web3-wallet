@@ -1,17 +1,13 @@
 import { useState } from 'react';
 import { BaseError, useSendTransaction } from 'wagmi';
-import { parseEther } from 'viem'
-
+import { parseEther } from 'viem';
 
 const TransferAssets = () => {
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<BaseError | undefined>();
-  const { 
-    data: hash,
-    isPending, 
-    sendTransaction 
-  } = useSendTransaction() 
+  const { data: hash, isPending, sendTransaction } = useSendTransaction();
+
   const handleTransfer = async () => {
     try {
       await sendTransaction({
@@ -19,10 +15,9 @@ const TransferAssets = () => {
         value: parseEther(amount),
       });
     } catch (error) {
-        setError(error as BaseError);
+      setError(error as BaseError);
     }
   };
-
 
   return (
     <div>
@@ -39,15 +34,13 @@ const TransferAssets = () => {
         onChange={(e) => setAmount(e.target.value)}
       />
       <button onClick={handleTransfer} disabled={!recipient || !amount || isPending}>
-      {isPending ? 'Confirming...' : 'Send'}
+        {isPending ? 'Confirming...' : 'Send'}
       </button>
-      {error && (
-        <div>Error: {error.message}</div>
-      )}
-      <div>{hash && <div>Transaction Hash: {hash}</div>}
-      </div>
+      {error && <div>Error: {error.message}</div>}
+      <div>{hash && <div>Transaction Hash: {hash}</div>}</div>
     </div>
   );
 };
 
 export default TransferAssets;
+
