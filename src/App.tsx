@@ -1,22 +1,22 @@
 import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
 import {
-  Select,
-  MenuItem,
   Button,
   Box,
   Modal,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ERC20_TOKENS } from './constants';
 import PieChartComponent from './PieChart';
 import TransferAssets from './TransferAssets';
+import { SwitchNetWork } from './SwitchNetwork';
 
 function App() {
   const account = useAccount();
   const { connectors, connect, status, error } = useConnect();
   const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -25,45 +25,11 @@ function App() {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '400px',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-  };
-
-  const handleSwitchNetwork = async (chainId: number) => {
-    if (window.ethereum) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${chainId.toString(16)}` }],
-        });
-      } catch (switchError) {
-        if ((switchError as any).code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: `0x${chainId.toString(16)}`,
-                  rpcUrl:
-                    chainId === mainnet.id
-                      ? mainnet.rpcUrls.default
-                      : sepolia.rpcUrls.default,
-                },
-              ],
-            });
-          } catch (addError) {
-            console.error(addError);
-          }
-        } else {
-          console.error(switchError);
-        }
-      }
-    } else {
-      console.error('Ethereum object not found');
-    }
   };
 
   const [usdPrices, setUsdPrices] = useState<{
@@ -115,39 +81,72 @@ function App() {
 
   return (
     <>
-      <div>
-        <h2>Account</h2>
+      <Box
+        sx={{
+          display: 'flex',
+          borderRadius: '8px',
+          border: '1px solid rgba(0,0,0,0.26)',
+          padding: '24px',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        <Typography variant='h5'>Connect Wallet</Typography>
+        <Typography variant='body2' color="gray">
+          Connect your cryptocurrency wallet to view your asset portfolio.
+        </Typography>
 
-        <div>
-          status: {account.status}
-          <br />
-          addresses: {JSON.stringify(account.addresses)}
-          <br />
-          chainId: {account.chainId}
-        </div>
-
-        {account.status === 'connected' && (
-          <button type="button" onClick={() => disconnect()}>
-            Disconnect
-          </button>
+        {account.status === "connected" && (
+          <Typography variant='body2'>Address: {JSON.stringify(account.addresses).slice(2, -2)}</Typography>
         )}
-      </div>
+
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          padding={2}
+        >
+          {account.status !== "connected" ? (
+            <Button
+              variant="contained"
+              sx={{ width: "200px" }}
+              onClick={() => connect({ connector: connectors[3] })}
+              type="button"
+            >
+              Connect Wallet
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{ width: "200px" }}
+              type="button"
+              onClick={() => disconnect()}
+            >
+              Disconnect
+            </Button>
+          )}
+        </Box>
+      </Box>
 
       {balance.data && Object.keys(usdPrices).length > 0 && (
         <div>
           {balance.data.formatted}
           {parseFloat(`${balance.data.value}`) / 10 ** 18 * usdPrices.ethereum.usd}
           {balance.data.symbol}
+
           <PieChartComponent data={assets} />
         </div>
       )}
+
       {Object.keys(usdPrices).length > 0 && (
         <div>
           <img src={ERC20_TOKENS[0].icon} />
           BITCOIN <p>bitcoin: {usdPrices?.bitcoin.usd}</p>
           <Button onClick={handleOpen}>Open modal</Button>
+
           <img src={ERC20_TOKENS[1].icon} />
           Ethereum <p>ethereum: {usdPrices?.ethereum.usd}</p>
+
           <img src={ERC20_TOKENS[2].icon} />
           USD <p>USD: {usdPrices?.['usd-coin'].usd}</p>
         </div>
@@ -179,15 +178,7 @@ function App() {
         </Box>
       </Modal>
 
-      {account.status === 'connected' && (
-        <div>
-          <h2>Switch Network</h2>
-          <Select defaultValue="" onChange={(e) => handleSwitchNetwork(Number(e.target.value))}>
-            <MenuItem value={mainnet.id}>Ethereum Mainnet</MenuItem>
-            <MenuItem value={sepolia.id}>Sepolia Testnet</MenuItem>
-          </Select>
-        </div>
-      )}
+      {account.status === 'connected' && <SwitchNetWork />}
     </>
   );
 }
