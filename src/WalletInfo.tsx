@@ -8,22 +8,25 @@ export const WalletInfo = () => {
 
   return (
     <Box
-      sx={{
-        display: 'flex',
-        borderRadius: '8px',
-        border: '1px solid rgba(0, 0, 0, 0.26)',
-        padding: '24px',
-        flexDirection: 'column',
-        gap: '8px',
-      }}
+      display="flex"
+      borderRadius="8px"
+      border="1px solid rgba(0, 0, 0, 0.26)"
+      padding={3}
+      flexDirection="column"
+      gap={1}
     >
-      <Typography variant='h5'>{account.status === 'connected' ? 'Wallet Info' : 'Connect Wallet'}</Typography>
-      <Typography variant='body2' color="gray">
-        {account.status !== 'connected' && 'Connect your cryptocurrency wallet to view your asset portfolio.'}
+      <Typography variant="h5">
+        {account.status === 'connected' ? 'Wallet Info' : 'Connect Wallet'}
+      </Typography>
+      <Typography variant="body2" color="gray">
+        {account.status !== 'connected' &&
+          'Connect your cryptocurrency wallet to view your asset portfolio.'}
       </Typography>
 
       {account.status === 'connected' && (
-        <Typography variant='body2'>Address: {JSON.stringify(account.addresses).slice(2, -2)}</Typography>
+        <Typography variant="body2">
+          Address: {JSON.stringify(account.addresses).slice(2, -2)}
+        </Typography>
       )}
 
       <Box
@@ -55,3 +58,4 @@ export const WalletInfo = () => {
     </Box>
   );
 };
+
