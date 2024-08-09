@@ -2,13 +2,11 @@ import { Box } from '@mui/material';
 import { WalletInfo } from './WalletInfo';
 import { AssetList } from './AssetList';
 import { AssetValue } from './AssetValue';
-import { Provider } from 'react-redux';
-import store from './store'
+
 
 function App() {
 
   return (
-    <Provider store={store}>
     <Box
       display="flex"
       justifyContent="center"
@@ -28,7 +26,6 @@ function App() {
         <AssetValue />
       </Box>
     </Box>
-    </Provider>
   );
 }
 

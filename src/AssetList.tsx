@@ -12,10 +12,10 @@ export const AssetList = () => {
   const assetsData = useSelector(
     (state: { assetsData: any }) => state.assetsData
   );
-  const { assets, balance, usdPrices } = assetsData;
+  const { assets, balance, usdPrices, account } = assetsData;
 
   const { data: balanceData } = useBalance({
-    address: "0x6b175474e89094c44da98b954eedeac495271d0f",
+    address: account.address,
   });
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const AssetList = () => {
       {
         id: 2,
         label: "Ethereum",
-        amount: parseFloat(`${balance?.value}`),
+        amount: parseFloat(`${balance?.value}`) || 0,
         value:
           (parseFloat(`${balance?.value}`) / 10 ** 18) *
             usdPricesValue.ethereum?.usd ||
@@ -71,7 +71,7 @@ export const AssetList = () => {
   }, [balance?.value, usdPrices, dispatch]);
 
   const style = {
-    position: "absolute" as "absolute",
+    position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",

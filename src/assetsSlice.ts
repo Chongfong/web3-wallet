@@ -4,6 +4,7 @@ const initialState = {
   assets: [],
   balance: null,
   usdPrices: {},
+  account: {},
 };
 
 const assetsSlice = createSlice({
@@ -19,8 +20,11 @@ const assetsSlice = createSlice({
     setUsdPrices: (state, action) => {
       state.usdPrices = action.payload;
     },
+    setAccount: (state, action) => {
+        state.account = action.payload;
+    }
   },
 });
 
-export const { setAssets, setBalance, setUsdPrices } = assetsSlice.actions;
+export const { setAssets, setBalance, setUsdPrices, setAccount } = assetsSlice.actions;
 export default assetsSlice.reducer;
