@@ -1,12 +1,9 @@
-import { useAccount } from 'wagmi';
 import { Box } from '@mui/material';
-import { SwitchNetWork } from './SwitchNetwork';
 import { WalletInfo } from './WalletInfo';
 import { AssetList } from './AssetList';
 import { AssetValue } from './AssetValue';
 
 function App() {
-  const account = useAccount();
 
   return (
     <Box
@@ -27,7 +24,6 @@ function App() {
         <AssetList />
         <AssetValue />
       </Box>
-      {account.status === 'connected' && <SwitchNetWork />}
     </Box>
   );
 }
