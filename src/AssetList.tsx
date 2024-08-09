@@ -1,42 +1,47 @@
-import { Box, Modal, Typography, Button } from "@mui/material"
-import { DataGrid, GridColDef } from "@mui/x-data-grid"
-import { useEffect, useState } from "react"
-import TransferAssets from "./TransferAssets"
-import { ERC20_TOKENS } from "./constants"
-import { useBalance } from "wagmi"
+import { Box, Modal, Typography, Button } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
+import TransferAssets from "./TransferAssets";
+import { ERC20_TOKENS } from "./constants";
+import { useBalance } from "wagmi";
+import { useDispatch, useSelector } from "react-redux";
+import { setAssets, setBalance, setUsdPrices } from "./assetsSlice";
 
 export const AssetList = () => {
-  const [assets, setAssets] = useState<{
-    id: number
-    value: number
-    icon: string
-    label: string
-    amount: number
-  }[]>([])
+  const dispatch = useDispatch();
+  const assetsData = useSelector(
+    (state: { assetsData: any }) => state.assetsData
+  );
+  const { assets, balance, usdPrices } = assetsData;
 
-  const [usdPrices, setUsdPrices] = useState<{
-    [key: string]: { usd: number }
-  }>({})
-
-  const balance = useBalance({
-    address: "0x6b175474e89094c44da98b954eedeac495271d0f", // account.address,
-  })
-
-  const fetchUsdPrices = () => {
-    fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd"
-    )
-      .then((data) => data.json())
-      .then((price) => setUsdPrices(price))
-  }
+  const { data: balanceData } = useBalance({
+    address: "0x6b175474e89094c44da98b954eedeac495271d0f",
+  });
 
   useEffect(() => {
-    fetchUsdPrices()
-  }, [])
+    const fetchUsdPrices = () => {
+      fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd"
+      )
+        .then((data) => data.json())
+        .then((price) => {
+          dispatch(setUsdPrices(price));
+        });
+    };
+
+    fetchUsdPrices();
+  }, [dispatch]);
 
   useEffect(() => {
-    const usdPricesValue = usdPrices || {}
-    setAssets([
+    if (balanceData) {
+      dispatch(setBalance(balanceData));
+    }
+  }, [balanceData, dispatch]);
+
+  useEffect(() => {
+    const usdPricesValue = usdPrices || {};
+
+    const newAssets = [
       {
         id: 1,
         label: "BITCOIN",
@@ -47,9 +52,9 @@ export const AssetList = () => {
       {
         id: 2,
         label: "Ethereum",
-        amount: parseFloat(`${balance?.data?.value}`),
+        amount: parseFloat(`${balance?.value}`),
         value:
-          (parseFloat(`${balance?.data?.value}`) / 10 ** 18) *
+          (parseFloat(`${balance?.value}`) / 10 ** 18) *
             usdPricesValue.ethereum?.usd ||
           0,
         icon: ERC20_TOKENS[1].icon,
@@ -61,8 +66,9 @@ export const AssetList = () => {
         value: 20 * usdPricesValue["usd-coin"]?.usd || 0,
         icon: ERC20_TOKENS[2].icon,
       },
-    ])
-  }, [balance?.data?.value, usdPrices])
+    ];
+    dispatch(setAssets(newAssets));
+  }, [balance?.value, usdPrices, dispatch]);
 
   const style = {
     position: "absolute" as "absolute",
@@ -74,12 +80,12 @@ export const AssetList = () => {
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-  }
+  };
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const columns: GridColDef[] = [
     {
@@ -87,13 +93,17 @@ export const AssetList = () => {
       headerName: "Asset",
       width: 130,
       renderCell: (params) => {
-        const row = params.row
+        const row = params.row;
         return (
           <Box display="flex" gap={1} height="100%" alignItems="center">
-            <img style={{ width: 20, height: 20 }} src={row.icon} alt={row.label} />
+            <img
+              style={{ width: 20, height: 20 }}
+              src={row.icon}
+              alt={row.label}
+            />
             <Typography variant="body2">{row.label}</Typography>
           </Box>
-        )
+        );
       },
     },
     { field: "amount", headerName: "Amount", width: 130 },
@@ -108,7 +118,7 @@ export const AssetList = () => {
         </Button>
       ),
     },
-  ]
+  ];
 
   return (
     <Box
@@ -118,14 +128,14 @@ export const AssetList = () => {
       padding={3}
       flexDirection="column"
       gap={1}
-      width='100%'
+      width="100%"
     >
       <Typography variant="h5">Asset List</Typography>
       <Typography variant="body2" color="gray">
         View your cryptocurrency assets and their current value.
       </Typography>
 
-      <Box height='400px' width="100%" marginTop={3}>
+      <Box height="400px" width="100%" marginTop={3}>
         <DataGrid rows={assets} columns={columns} />
       </Box>
 
@@ -140,5 +150,6 @@ export const AssetList = () => {
         </Box>
       </Modal>
     </Box>
-  )
-}
+  );
+};
+
