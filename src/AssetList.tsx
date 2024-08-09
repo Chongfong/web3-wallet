@@ -10,7 +10,7 @@ export const AssetList = () => {
     id: number
     value: number
     icon: string
-    asset: string
+    label: string
     amount: number
   }[]>([])
 
@@ -39,14 +39,14 @@ export const AssetList = () => {
     setAssets([
       {
         id: 1,
-        asset: "BITCOIN",
+        label: "BITCOIN",
         amount: 10,
         value: 10 * usdPricesValue.bitcoin?.usd || 0,
         icon: ERC20_TOKENS[0].icon,
       },
       {
         id: 2,
-        asset: "Ethereum",
+        label: "Ethereum",
         amount: parseFloat(`${balance?.data?.value}`),
         value:
           (parseFloat(`${balance?.data?.value}`) / 10 ** 18) *
@@ -56,7 +56,7 @@ export const AssetList = () => {
       },
       {
         id: 3,
-        asset: "USD",
+        label: "USD",
         amount: 20,
         value: 20 * usdPricesValue["usd-coin"]?.usd || 0,
         icon: ERC20_TOKENS[2].icon,
@@ -90,8 +90,8 @@ export const AssetList = () => {
         const row = params.row
         return (
           <Box display="flex" gap={1} height="100%" alignItems="center">
-            <img style={{ width: 20, height: 20 }} src={row.icon} alt={row.asset} />
-            <Typography variant="body2">{row.asset}</Typography>
+            <img style={{ width: 20, height: 20 }} src={row.icon} alt={row.label} />
+            <Typography variant="body2">{row.label}</Typography>
           </Box>
         )
       },
@@ -118,15 +118,16 @@ export const AssetList = () => {
       padding={3}
       flexDirection="column"
       gap={1}
+      width='100%'
     >
       <Typography variant="h5">Asset List</Typography>
       <Typography variant="body2" color="gray">
         View your cryptocurrency assets and their current value.
       </Typography>
 
-      <div style={{ height: 400, width: "100%" }}>
+      <Box height='400px' width="100%" marginTop={3}>
         <DataGrid rows={assets} columns={columns} />
-      </div>
+      </Box>
 
       <Modal
         open={open}
