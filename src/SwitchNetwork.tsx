@@ -1,17 +1,21 @@
-import { MenuItem, Select } from "@mui/material";
+import { Box, MenuItem, Select, Typography } from "@mui/material";
 import { mainnet, sepolia } from "wagmi/chains";
 
 export const SwitchNetWork = () => (
-  <div>
-    <h2>Switch Network</h2>
+  <Box marginTop={2}>
+    <Typography variant="h6">Switch Network</Typography>
     <Select
       defaultValue=""
+      displayEmpty
+      renderValue={(selected) =>
+        selected === "" ? <em>Switch Network</em> : Number(selected) === mainnet.id ? "Ethereum Mainnet" : "Sepolia Testnet"
+      }
       onChange={(e) => handleSwitchNetwork(Number(e.target.value))}
     >
       <MenuItem value={mainnet.id}>Ethereum Mainnet</MenuItem>
       <MenuItem value={sepolia.id}>Sepolia Testnet</MenuItem>
     </Select>
-  </div>
+  </Box>
 );
 
 const handleSwitchNetwork = async (chainId: number) => {
@@ -19,11 +23,7 @@ const handleSwitchNetwork = async (chainId: number) => {
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [
-          {
-            chainId: `0x${chainId.toString(16)}`,
-          },
-        ],
+        params: [{ chainId: `0x${chainId.toString(16)}` }],
       });
     } catch (switchError) {
       if ((switchError as any).code === 4902) {
@@ -33,10 +33,7 @@ const handleSwitchNetwork = async (chainId: number) => {
             params: [
               {
                 chainId: `0x${chainId.toString(16)}`,
-                rpcUrl:
-                  chainId === mainnet.id
-                    ? mainnet.rpcUrls.default
-                    : sepolia.rpcUrls.default,
+                rpcUrl: chainId === mainnet.id ? mainnet.rpcUrls.default : sepolia.rpcUrls.default,
               },
             ],
           });

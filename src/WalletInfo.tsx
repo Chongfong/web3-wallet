@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { SwitchNetWork } from './SwitchNetwork';
 
 export const WalletInfo = () => {
   const account = useAccount();
@@ -28,6 +29,8 @@ export const WalletInfo = () => {
           Address: {JSON.stringify(account.addresses).slice(2, -2)}
         </Typography>
       )}
+
+      {account.status === 'connected' && <SwitchNetWork />}
 
       <Box
         display="flex"
