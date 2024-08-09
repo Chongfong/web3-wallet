@@ -4,6 +4,7 @@ import { SwitchNetWork } from './SwitchNetwork';
 import { setAccount } from './assetsSlice';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 export const WalletInfo = () => {
   const dispatch = useDispatch();
@@ -36,9 +37,12 @@ export const WalletInfo = () => {
       </Typography>
 
       {account.status === 'connected' && (
-        <Typography variant="body2">
-          Address: {JSON.stringify(account.addresses).slice(2, -2)}
-        </Typography>
+        <Box display='flex' alignItems='center' gap={1}>
+          <AccountBalanceWalletIcon/> 
+          <Typography variant="body2">
+            {JSON.stringify(account.addresses).slice(2, -2)}
+          </Typography>
+        </Box>
       )}
 
       {account.status === 'connected' && <SwitchNetWork />}
@@ -56,6 +60,7 @@ export const WalletInfo = () => {
             onClick={() => connect({ connector: connectors[3] })}
             type="button"
           >
+            <AccountBalanceWalletIcon/> 
             Connect Wallet
           </Button>
         ) : (
