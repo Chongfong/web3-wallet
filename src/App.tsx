@@ -10,6 +10,7 @@ import PieChartComponent from './PieChart';
 import TransferAssets from './TransferAssets';
 import { SwitchNetWork } from './SwitchNetwork';
 import { WalletInfo } from './WalletInfo';
+import { AssetList } from './AssetList';
 
 function App() {
   const account = useAccount();
@@ -81,6 +82,11 @@ function App() {
   return (
     <>
       <WalletInfo/>
+      <Box display='flex' justifyContent='center' gap={3}>
+        <AssetList/>
+        <Box>aaa</Box>
+        <Box>bbb</Box>
+      </Box>
 
       {balance.data && Object.keys(usdPrices).length > 0 && (
         <div>
