@@ -4,9 +4,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { WagmiProvider } from 'wagmi'
 import { Provider } from 'react-redux'
-import store from './store'
+import store from './store/store.ts'
+import { config } from './utils/wagmi.ts'
 import App from './App.tsx'
-import { config } from './wagmi.ts'
 
 import './index.css'
 

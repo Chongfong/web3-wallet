@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { SwitchNetWork } from './SwitchNetwork';
-import { setAccount } from './assetsSlice';
+import { setAccount } from '../store/assetsSlice';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';

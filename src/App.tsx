@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
-import { WalletInfo } from './WalletInfo';
-import { AssetList } from './AssetList';
-import { AssetValue } from './AssetValue';
+import { WalletInfo } from './components/WalletInfo';
+import { AssetList } from './components/AssetList';
+import { AssetValue } from './components/AssetValue';
 
 
 function App() {
