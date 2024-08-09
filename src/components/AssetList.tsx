@@ -6,18 +6,14 @@ import { ERC20_TOKENS } from "../utils/constants";
 import { useBalance } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
 import { setAssets, setBalance, setUsdPrices } from "../store/assetsSlice";
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 
 export const AssetList = () => {
   const dispatch = useDispatch();
-  const assetsData = useSelector(
-    (state: { assetsData: any }) => state.assetsData
-  );
+  const assetsData = useSelector((state: { assetsData: any }) => state.assetsData);
   const { assets, balance, usdPrices, account } = assetsData;
 
-  const { data: balanceData } = useBalance({
-    address: account.address,
-  });
+  const { data: balanceData } = useBalance({ address: account.address });
 
   useEffect(() => {
     const fetchUsdPrices = () => {
@@ -25,18 +21,14 @@ export const AssetList = () => {
         "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd"
       )
         .then((data) => data.json())
-        .then((price) => {
-          dispatch(setUsdPrices(price));
-        });
+        .then((price) => dispatch(setUsdPrices(price)));
     };
 
     fetchUsdPrices();
   }, [dispatch]);
 
   useEffect(() => {
-    if (balanceData) {
-      dispatch(setBalance(balanceData));
-    }
+    if (balanceData) dispatch(setBalance(balanceData));
   }, [balanceData, dispatch]);
 
   useEffect(() => {
@@ -56,7 +48,7 @@ export const AssetList = () => {
         amount: parseFloat(`${balance?.value}`) || 0,
         value:
           (parseFloat(`${balance?.value}`) / 10 ** 18) *
-            usdPricesValue.ethereum?.usd ||
+          usdPricesValue.ethereum?.usd ||
           0,
         icon: ERC20_TOKENS[1].icon,
       },
@@ -114,43 +106,47 @@ export const AssetList = () => {
       headerName: "Actions",
       width: 130,
       renderCell: () => (
-        <Button onClick={handleOpen} style={{ cursor: "pointer", border: "1px solid" }} >
-          <ArrowOutwardIcon/>
+        <Button onClick={handleOpen} style={{ cursor: "pointer", border: "1px solid" }}>
+          <ArrowOutwardIcon />
         </Button>
       ),
     },
   ];
 
   return (
-    <Box
-      display="flex"
-      borderRadius="8px"
-      border="1px solid rgba(0, 0, 0, 0.26)"
-      padding={3}
-      flexDirection="column"
-      gap={1}
-      width="100%"
-    >
-      <Typography variant="h5">Asset List</Typography>
-      <Typography variant="body2" color="gray">
-        View your cryptocurrency assets and their current value.
-      </Typography>
+    <>
+      {account.address && (
+        <Box
+          display="flex"
+          borderRadius="8px"
+          border="1px solid rgba(0, 0, 0, 0.26)"
+          padding={3}
+          flexDirection="column"
+          gap={1}
+          width="100%"
+        >
+          <Typography variant="h5">Asset List</Typography>
+          <Typography variant="body2" color="gray">
+            View your cryptocurrency assets and their current value.
+          </Typography>
 
-      <Box height="400px" width="100%" marginTop={3}>
-        <DataGrid rows={assets} columns={columns} />
-      </Box>
+          <Box height="400px" width="100%" marginTop={3}>
+            <DataGrid rows={assets} columns={columns} />
+          </Box>
 
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <TransferAssets />
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <TransferAssets />
+            </Box>
+          </Modal>
         </Box>
-      </Modal>
-    </Box>
+      )}
+    </>
   );
 };
 
