@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BaseError, useSendTransaction } from 'wagmi';
 import { parseEther } from 'viem';
 
-const TransferAssets = () => {
+export const TransferAssets = () => {
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<BaseError | undefined>();
@@ -41,6 +41,3 @@ const TransferAssets = () => {
     </div>
   );
 };
-
-export default TransferAssets;
-

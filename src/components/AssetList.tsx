@@ -1,11 +1,11 @@
 import { Box, Modal, Typography, Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import TransferAssets from "./TransferAssets";
-import { ERC20_TOKENS } from "./constants";
+import { TransferAssets } from "./TransferAssets";
+import { ERC20_TOKENS } from "../utils/constants";
 import { useBalance } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
-import { setAssets, setBalance, setUsdPrices } from "./assetsSlice";
+import { setAssets, setBalance, setUsdPrices } from "../store/assetsSlice";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 export const AssetList = () => {
