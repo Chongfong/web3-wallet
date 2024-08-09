@@ -6,6 +6,7 @@ import { ERC20_TOKENS } from "./constants";
 import { useBalance } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
 import { setAssets, setBalance, setUsdPrices } from "./assetsSlice";
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 export const AssetList = () => {
   const dispatch = useDispatch();
@@ -113,8 +114,8 @@ export const AssetList = () => {
       headerName: "Actions",
       width: 130,
       renderCell: () => (
-        <Button onClick={handleOpen} style={{ cursor: "pointer" }}>
-          Transfer
+        <Button onClick={handleOpen} style={{ cursor: "pointer", border: "1px solid" }} >
+          <ArrowOutwardIcon/>
         </Button>
       ),
     },
