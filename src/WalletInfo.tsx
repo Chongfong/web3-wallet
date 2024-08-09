@@ -1,9 +1,20 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { SwitchNetWork } from './SwitchNetwork';
+import { setAccount } from './assetsSlice';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 export const WalletInfo = () => {
+  const dispatch = useDispatch();
   const account = useAccount();
+
+  useEffect(() => {
+    if (account) {
+      dispatch(setAccount(account));
+    }
+  }, [account]);
+
   const { connectors, connect } = useConnect();
   const { disconnect } = useDisconnect();
 
