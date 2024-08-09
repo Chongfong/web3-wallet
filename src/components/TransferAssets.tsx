@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { BaseError, useSendTransaction } from 'wagmi';
 import { parseEther } from 'viem';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 export const TransferAssets = () => {
   const [recipient, setRecipient] = useState('');
@@ -20,24 +22,36 @@ export const TransferAssets = () => {
   };
 
   return (
-    <div>
-      <input
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      gap={2}
+    >
+      <Typography variant="body2">TO:</Typography>
+      <TextField
         type="text"
         placeholder="Recipient address"
         value={recipient}
         onChange={(e) => setRecipient(e.target.value)}
       />
-      <input
+      <Typography variant="body2">AMOUNT:</Typography>
+      <TextField
         type="text"
         placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
-      <button onClick={handleTransfer} disabled={!recipient || !amount || isPending}>
-        {isPending ? 'Confirming...' : 'Send'}
-      </button>
-      {error && <div>Error: {error.message}</div>}
-      <div>{hash && <div>Transaction Hash: {hash}</div>}</div>
-    </div>
+      <Button onClick={handleTransfer} disabled={!recipient || !amount || isPending}>
+        {isPending ? 'Confirming...' : <ArrowOutwardIcon />}
+      </Button>
+      <Box>
+        {error && (
+          <Typography color="error">Error: {error.message}</Typography>
+        )}
+        <Box>{hash && <Box>Transaction Hash: {hash}</Box>}</Box>
+      </Box>
+    </Box>
   );
 };
+
