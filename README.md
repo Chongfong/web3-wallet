@@ -27,12 +27,6 @@
   - Prettier
   - Vite
 
-## Note
-
-The feature 4 Transaction Monitoring is not implemented,
-I have trouble getting the Testnet assets,
-and the value of BitCoin and USD is made by mock data.
-the Ethereum's amount and value would be right.
 
 ## Quick Start
 
